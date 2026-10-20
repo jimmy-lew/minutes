@@ -1,0 +1,16 @@
+{
+  "name": "minutes",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turn a Markdown file (with optional frontmatter) into a styled meeting-minutes page.",
+  "type": "module",
+  "bin": { "minutes": "./minutes.mjs" },
+  "scripts": {
+    "example": "node minutes.mjs examples/220926.md -o examples/220926.html"
+  },
+  "dependencies": {
+    "marked": "18.1.1",
+    "yaml": "2.9.1"
+  },
+  "engines": { "node": ">=20" }
+}
