@@ -4,13 +4,13 @@ Turns a Markdown file (with optional YAML frontmatter) into a self-contained mee
 
 ```sh
 cd tool && pnpm install
-pnpm build                                     # every .md in the repo → .html next to it
+pnpm build                                     # every .md in the repo → .html, plus folder indexes
 pnpm watch                                     # same, rebuilding on save
 node minutes.mjs ../techd/221026.md            # a single file
 node minutes.mjs notes.md -o out.html          # explicit output (-o - for stdout)
 ```
 
-Pushing to `main` runs [`.github/workflows/build.yml`](../.github/workflows/build.yml), which builds every Markdown file and deploys the HTML to GitHub Pages. Built `.html` files are gitignored, so only commit the `.md` sources. [`techd/220926.md`](../techd/220926.md) shows most of the syntax.
+Pushing to `main` runs [`.github/workflows/build.yml`](../.github/workflows/build.yml), which builds every Markdown file and deploys the HTML to GitHub Pages. Each folder also gets an `index.html` listing its meetings newest first (by frontmatter `date`, or a `DDMMYY` file name), and the root `index.html` lists the folders. Built `.html` files are gitignored, so only commit the `.md` sources. [`techd/220926.md`](../techd/220926.md) shows most of the syntax.
 
 ## Frontmatter
 
