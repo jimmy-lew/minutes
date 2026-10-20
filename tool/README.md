@@ -1,17 +1,16 @@
 # minutes
 
-Turns a Markdown file (with optional YAML frontmatter) into a self-contained meeting-minutes page, styled like [`techd/220926.html`](../techd/220926.html).
+Turns a Markdown file (with optional YAML frontmatter) into a self-contained meeting-minutes page, styled like the [HOTO minutes](https://jimmy-lew.github.io/minutes/techd/220926.html).
 
 ```sh
-cd tool && npm install
-node minutes.mjs ../techd/221026.md            # → ../techd/221026.html
-node minutes.mjs notes.md -o out.html          # explicit output
-node minutes.mjs a.md b.md -o dist/            # several files into a folder
-node minutes.mjs notes.md -o -                 # print to stdout
-node minutes.mjs notes.md --watch              # rebuild on save
+cd tool && pnpm install
+pnpm build                                     # every .md in the repo → .html next to it
+pnpm watch                                     # same, rebuilding on save
+node minutes.mjs ../techd/221026.md            # a single file
+node minutes.mjs notes.md -o out.html          # explicit output (-o - for stdout)
 ```
 
-[`examples/220926.md`](examples/220926.md) is the source for the HOTO minutes. It builds to a page that matches the hand-written original.
+Pushing to `main` runs [`.github/workflows/build.yml`](../.github/workflows/build.yml), which builds every Markdown file and deploys the HTML to GitHub Pages. Built `.html` files are gitignored, so only commit the `.md` sources. [`techd/220926.md`](../techd/220926.md) shows most of the syntax.
 
 ## Frontmatter
 
