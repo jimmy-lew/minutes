@@ -1,0 +1,5 @@
+node_modules/
+_site/
+
+# Pages are built from Markdown by CI (see .github/workflows/build.yml).
+*.html
