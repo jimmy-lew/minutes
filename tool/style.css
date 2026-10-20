@@ -208,3 +208,20 @@ footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line
   h1 { -webkit-text-fill-color: #000; background: none; }
   section { break-inside: avoid-page; }
 }
+
+/* directory pages */
+ul.index { list-style: none; padding: 0; margin: 0; max-width: none; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); overflow: hidden; }
+ul.index li { margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+ul.index li:last-child { border-bottom: none; }
+ul.index a {
+  display: grid; grid-template-columns: 1fr auto; gap: 0.15rem 1.5rem; padding: 0.9rem 1.1rem;
+  border: none; transition: background .12s;
+}
+ul.index a:hover { background: var(--panel-2); }
+ul.index .t { color: var(--text); font-weight: 500; }
+ul.index time { color: var(--text-4); font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; align-self: center; }
+ul.index .d { grid-column: 1 / -1; color: var(--text-3); font-size: 14px; }
+@media (max-width: 520px) {
+  ul.index a { grid-template-columns: 1fr; }
+  ul.index time { grid-row: 2; }
+}

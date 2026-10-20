@@ -311,6 +311,70 @@ function renderProps(fm) {
   return rows.length ? `<dl class="props">\n${rows.join('\n')}\n</dl>` : '';
 }
 
+const pageHead = (title, lang = 'en', css = '') => `<!DOCTYPE html>
+<html lang="${esc(lang)}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${esc(title)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
+<style>
+${css}
+</style>
+</head>`;
+
+// Date of a page: frontmatter `date`, else a DDMMYY file name (e.g. 220926 → 22 Sep 2026).
+function pageDate(fm, name) {
+  if (fm.date instanceof Date) return fm.date;
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(fm.date ?? '').trim());
+  if (iso) return new Date(Date.UTC(+iso[1], +iso[2] - 1, +iso[3]));
+  const ddmmyy = /^(\d{2})(\d{2})(\d{2})$/.exec(name);
+  if (ddmmyy) return new Date(Date.UTC(2000 + +ddmmyy[3], +ddmmyy[2] - 1, +ddmmyy[1]));
+  return null;
+}
+
+// Title, summary and date of a Markdown page, for index listings.
+export function pageMeta(source, name) {
+  const [fm, body] = splitFrontmatter(source);
+  const h1 = /^#[ \t]+(.+?)(?:[ \t]+\{[^}]*\})?[ \t]*$/m.exec(body);
+  const summary = fm.summary ?? fm.lede ?? fm.description;
+  return {
+    titleHtml: inline(fm.title ?? h1?.[1] ?? name),
+    summaryHtml: summary != null ? inline(summary) : '',
+    date: pageDate(fm, name),
+  };
+}
+
+// Directory page: `entries` = [{ href, titleHtml, summaryHtml, date }], listed newest first.
+// `crumb` items are strings or [text, href].
+export function renderIndex(entries, { title, crumb = [], lede = '', css = '' }) {
+  const sorted = [...entries].sort((a, b) => (b.date ?? 0) - (a.date ?? 0) || stripTags(a.titleHtml).localeCompare(stripTags(b.titleHtml)));
+  const rows = sorted.map((e) => `      <li><a href="${esc(e.href)}">
+        <span class="t">${e.titleHtml}</span>
+        <time${e.date ? ` datetime="${e.date.toISOString().slice(0, 10)}"` : ''}>${e.date ? formatDate(e.date) : ''}</time>
+        ${e.summaryHtml ? `<span class="d">${e.summaryHtml}</span>` : ''}
+      </a></li>`);
+  return `${pageHead(title, 'en', css)}
+<body>
+<div class="layout no-toc">
+  <main>
+    <header class="doc">
+${crumb.length ? `      <p class="crumb">${crumb.map((c) => (Array.isArray(c) ? `<a href="${esc(c[1])}">${esc(c[0])}</a>` : esc(c))).join(' <span class="sep">/</span> ')}</p>\n` : ''}      <h1>${esc(title)}</h1>
+${lede ? `      <p class="lede">${esc(lede)}</p>\n` : ''}    </header>
+    <section>
+      <ul class="index">
+${rows.join('\n')}
+      </ul>
+    </section>
+  </main>
+</div>
+</body>
+</html>
+`;
+}
+
 export function render(source, { name = 'Minutes', css = '' } = {}) {
   const [fm, body] = splitFrontmatter(source);
   const tokens = md.lexer(body);
@@ -364,19 +428,7 @@ export function render(source, { name = 'Minutes', css = '' } = {}) {
   const preambleHtml = preamble.some((t) => t.type !== 'space')
     ? `\n    <section class="intro">\n${parser().parse(preamble)}    </section>\n` : '';
 
-  return `<!DOCTYPE html>
-<html lang="${esc(fm.lang ?? 'en')}">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${esc(pageTitle)}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600&display=swap" rel="stylesheet">
-<style>
-${css}
-</style>
-</head>
+  return `${pageHead(pageTitle, fm.lang, css)}
 <body>
 <div class="layout${showToc ? '' : ' no-toc'}">
 ${showToc ? `  <nav class="toc" aria-label="Contents">
