@@ -161,6 +161,7 @@ tr.total td { color: var(--text); font-weight: 500; border-top: 1px solid var(--
 
 .actions td:first-child { color: var(--text-4); font-weight: 400; width: 2.5rem; font-variant-numeric: tabular-nums; }
 .actions td:nth-child(2) { color: var(--text-2); font-weight: 400; white-space: normal; }
+.actions td p { margin: 0.25rem 0 0; color: var(--text-3); font-size: 13.5px; }
 .muted { color: var(--text-4); }
 
 /* generic content */
